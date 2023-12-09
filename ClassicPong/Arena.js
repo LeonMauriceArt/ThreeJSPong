@@ -4,7 +4,7 @@ export class Wall
 {
 	constructor(y, size, Material)
 	{
-		this.plane = new THREE.PlaneGeometry(size, size, 30, 30)
+		this.plane = new THREE.PlaneGeometry(size, size, 15, 15)
 		this.material = Material
 		this.mesh = new THREE.Mesh(this.plane, this.material)
 		this.mesh.position.y = y

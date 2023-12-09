@@ -1,8 +1,7 @@
 import * as THREE from 'three'
 
 import { BALL_RADIUS, BALL_SPEED, GAME_AREA_HEIGHT, GAME_AREA_WIDTH, PADDLE_HEIGHT, PADDLE_WIDTH} from './Constants';
-import { lineMaterial } from './Materials';
-import { phongMaterial } from './Materials';
+import { ballMaterial } from './Materials';
 
 export class Ball
 {
@@ -11,10 +10,18 @@ export class Ball
 		this.speed = BALL_SPEED
 		this.x_vel = BALL_SPEED * -1;
 		this.y_vel = 0;
-		this.geometry = new THREE.SphereGeometry(BALL_RADIUS, 5, 5);
-		this.mesh = new THREE.Mesh(this.geometry, phongMaterial);
+		this.geometry = new THREE.SphereGeometry(BALL_RADIUS, 10, 10);
+		this.material = ballMaterial
+		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.set(0, 0, 0);
-		this.light = new THREE.PointLight(0xff0000, 1000 ,10000)
+		this.light = new THREE.PointLight(0xffffff, 10000 ,100)
+		this.light.castShadow = false
+	}
+	setcolor(color)
+	{
+		this.material.emissive.setHex(color);
+		this.material.color.setHex(color);
+		this.light.color.setHex(color);
 	}
 	update(player_one, player_two)
 	{
@@ -25,9 +32,9 @@ export class Ball
 	}
 	handle_ball_collision(player_one, player_two)
 	{
-		if (this.mesh.position.y + BALL_RADIUS >= GAME_AREA_HEIGHT)
+		if (this.mesh.position.y + BALL_RADIUS > GAME_AREA_HEIGHT)
 			this.y_vel *= -1
-		if(this.mesh.position.y - BALL_RADIUS <= GAME_AREA_HEIGHT * -1)
+		if(this.mesh.position.y - BALL_RADIUS < GAME_AREA_HEIGHT * -1)
 			this.y_vel *= -1
 
 		if (this.x_vel < 0)
