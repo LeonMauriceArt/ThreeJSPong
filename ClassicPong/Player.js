@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-import { GAME_AREA_HEIGHT, PADDLE_HEIGHT, PLAYER_SPEED } from './Constants.js'
+import { GAME_AREA_HEIGHT, PADDLE_HEIGHT, PLAYER_SPEED, WINNING_SCORE } from './Constants.js'
 
 
 export class Player
@@ -14,6 +14,7 @@ export class Player
 	  this.material.emissiveIntensity = 2
 	  this.mesh = new THREE.Mesh(this.geometry, this.material);
 	  this.mesh.position.set(x, y, 0);
+	  this.score = 0;
 	}
 	move(up)
 	{
@@ -31,6 +32,11 @@ export class Player
 	reset()
 	{
 		this.mesh.position.y = 0
+	}
+	score_point()
+	{
+		if (this.score < WINNING_SCORE)
+			this.score += 1
 	}
 	setcolor(newcolor)
 	{
