@@ -14,7 +14,7 @@ export class Ball
 		this.material = ballMaterial
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.set(0, 0, 0);
-		this.light = new THREE.PointLight(0xffffff, 10000 ,100)
+		this.light = new THREE.PointLight(0xffffff, 15000 ,150)
 		this.light.castShadow = false
 		this.timer = new THREE.Clock()
 	}
@@ -25,6 +25,7 @@ export class Ball
 	}
 	reset()
 	{
+		this.setcolor(0xffffff)
 		this.timer.start()
 		this.x_vel = 0
 		this.y_vel = 0
@@ -40,6 +41,7 @@ export class Ball
 		this.timer.stop();
 		this.x_vel = 0
 		this.y_vel = 0
+		this.light.intensity = 0
 		this.mesh.visible = false;
 	}
 	launch()

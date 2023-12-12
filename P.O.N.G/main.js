@@ -6,13 +6,17 @@ import {Player} from './Player.js'
 import * as material from './Materials.js'
 import {Wall} from './Arena.js'
 import {Ball} from './Ball.js'
+import { ScreenShake } from './ScreenShake.js';
 import * as constants from './Constants.js';
 
 var gameisover, camera, orbitcontrols, renderer, player_one, 
 player_two, ball, scene, 
 player_one_score_text, player_two_score_text, droidFont, winning_text,
 player_one_goal, player_two_goal
+
 const keys = {};
+
+var screenShake = ScreenShake()
 
 gameisover = false
 
@@ -99,6 +103,7 @@ function initControls(){
 	orbitcontrols = new OrbitControls( camera, renderer.domElement );
 	orbitcontrols.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
 	orbitcontrols.dampingFactor = 0.05;
+	orbitcontrols.enabled = false
 	orbitcontrols.screenSpacePanning = true;
 
 	window.addEventListener('keydown', handleKeyDown);
@@ -109,6 +114,7 @@ function handle_scores()
 {
 	if (ball.mesh.position.x > constants.GAME_AREA_WIDTH)
 	{
+		screenShake.shake( camera, new THREE.Vector3(-5, -5, 20), constants.BALL_RESPAWN_TIME * 1000/* ms */ );
 		player_one.score_point()
 		scene.remove(player_one_score_text)
 		player_one_score_text = createTextMesh(droidFont, player_one.score.toString(), player_one_score_text, (constants.GAME_AREA_WIDTH / 2) * -1, 0,-80, constants.PLAYER_1_COLOR, 50);
@@ -116,6 +122,7 @@ function handle_scores()
 	}
 	else
 	{
+		screenShake.shake( camera, new THREE.Vector3(5, 5, 20), constants.BALL_RESPAWN_TIME * 1000 /* ms */ );
 		player_two.score_point()
 		scene.remove(player_two_score_text)
 		player_two_score_text = createTextMesh(droidFont, player_two.score.toString(), player_two_score_text, constants.GAME_AREA_WIDTH / 2, 0,-80, constants.PLAYER_2_COLOR, 50);
@@ -134,31 +141,46 @@ function winning()
 	ball.stop();
 	scene.remove(player_one_score_text)
 	scene.remove(player_two_score_text)
+	var light1;
+	var light2;
 	if (player_one.score == constants.WINNING_SCORE)
-		winning_text = createTextMesh(droidFont, "PLAYER 1 WIN", player_one_score_text, 0, 0, 0, constants.PLAYER_1_COLOR, 13)
+	{
+		winning_text = createTextMesh(droidFont, "PLAYER 1 WIN", player_one_score_text, 0, 0, 0, 0xffffff, 13)
+		winning_text.material.emissiveIntensity = 0.5
+		light1 = new THREE.PointLight(constants.PLAYER_1_COLOR, 20000, 300);
+		light1.position.set(constants.GAME_AREA_WIDTH / 3, constants.GAME_AREA_HEIGHT / 3)
+		light2 = new THREE.PointLight(constants.PLAYER_1_COLOR, 20000, 300);
+		light2.position.set(constants.GAME_AREA_WIDTH * -1 / 3, constants.GAME_AREA_HEIGHT * -1 / 3)
+	}
 	else
-		winning_text = createTextMesh(droidFont, "PLAYER 2 WIN", player_two_score_text, 0, 0, 0, constants.PLAYER_2_COLOR, 13)
-	scene.add(winning_text)
+	{
+		winning_text = createTextMesh(droidFont, "PLAYER 2 WIN", player_two_score_text, 0, 0, 0, 0xffffff, 13)
+		winning_text.material.emissiveIntensity = 0.5
+		light1 = new THREE.PointLight(constants.PLAYER_2_COLOR, 20000, 300);
+		light1.position.set(constants.GAME_AREA_WIDTH / 3, constants.GAME_AREA_HEIGHT / 3)
+		light2 = new THREE.PointLight(constants.PLAYER_2_COLOR, 20000, 300);
+		light2.position.set(constants.GAME_AREA_WIDTH * -1 / 3, constants.GAME_AREA_HEIGHT * -1 / 3)
+	}
+	scene.add(winning_text, light1, light2)
 	gameisover = true
 }
 
 //GameLoop
 function animate() {
 	
-	requestAnimationFrame( animate );
-	
+	screenShake.update(camera);
 	orbitcontrols.update();
-
+	
 	if (!gameisover)
 	{
 		ball.update(player_one, player_two);
 		if (ball.mesh.position.x < constants.GAME_AREA_WIDTH * -1 || ball.mesh.position.x > constants.GAME_AREA_WIDTH)
-			handle_scores()
-		if (keys['ArrowUp']) {
-			player_two.move(true);
-		}
-		if (keys['ArrowDown']) {
-			player_two.move(false);
+		handle_scores()
+	if (keys['ArrowUp']) {
+		player_two.move(true);
+	}
+	if (keys['ArrowDown']) {
+		player_two.move(false);
 		}
 		if (keys['KeyW']) {
 			player_one.move(true);
@@ -173,6 +195,7 @@ function animate() {
 		scene.remove(player_one.mesh, player_two.mesh, player_one_goal, player_two_goal)
 	}
 	render();
+	requestAnimationFrame( animate );
 }
 
 function render(){

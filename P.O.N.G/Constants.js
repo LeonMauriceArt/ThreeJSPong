@@ -24,6 +24,6 @@ export const POWER_SPAWNAREA_HEIGHT = GAME_AREA_HEIGHT * 0.8
 export const POWER_WALL_DURATION = 0.5
 export const POWER_CURSE_DURATION = 2
 
-export const PLAYER_1_COLOR = 0x0000ff
-export const PLAYER_2_COLOR = 0xff0000
+export const PLAYER_1_COLOR = 0x00FFFF
+export const PLAYER_2_COLOR = 0xe60000
 
