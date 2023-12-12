@@ -1,16 +1,16 @@
 import * as THREE from 'three'
 
-import { BALL_RADIUS, BALL_SPEED, GAME_AREA_HEIGHT, PADDLE_HEIGHT, PADDLE_WIDTH, BALL_RESPAWN_TIME} from './Constants';
+import * as constants from './Constants.js';
 import { ballMaterial } from './Materials';
 
 export class Ball
 {
 	constructor()
 	{
-		this.speed = BALL_SPEED
-		this.x_vel = BALL_SPEED * -1;
+		this.speed = constants.BALL_SPEED
+		this.x_vel = constants.BALL_SPEED * -1;
 		this.y_vel = 0;
-		this.geometry = new THREE.SphereGeometry(BALL_RADIUS, 10, 10);
+		this.geometry = new THREE.SphereGeometry(constants.BALL_RADIUS, 10, 10);
 		this.material = ballMaterial
 		this.mesh = new THREE.Mesh(this.geometry, this.material);
 		this.mesh.position.set(0, 0, 0);
@@ -21,7 +21,6 @@ export class Ball
 	setcolor(color)
 	{
 		this.material.emissive.setHex(color);
-		this.material.color.setHex(color);
 		this.light.color.setHex(color);
 	}
 	reset()
@@ -32,6 +31,10 @@ export class Ball
 		this.mesh.position.set(0,0,0)
 		this.light.position.set(0,0,0)
 	}
+	reverse()
+	{
+		this.x_vel *= -1
+	}
 	stop()
 	{
 		this.timer.stop();
@@ -41,7 +44,7 @@ export class Ball
 	}
 	launch()
 	{
-		this.x_vel = BALL_SPEED
+		this.x_vel = constants.BALL_SPEED
 		this.timer.stop()
 	}
 	update(player_one, player_two)
@@ -49,7 +52,7 @@ export class Ball
 		if(this.timer.running)
 		{
 			this.timer.getElapsedTime()
-			if (this.timer.elapsedTime >= BALL_RESPAWN_TIME)
+			if (this.timer.elapsedTime >= constants.BALL_RESPAWN_TIME)
 				this.launch()
 		}
 		else
@@ -62,21 +65,27 @@ export class Ball
 	}
 	handle_ball_collision(player_one, player_two)
 	{
-		if (this.mesh.position.y + BALL_RADIUS > GAME_AREA_HEIGHT)
+		if (this.mesh.position.y + constants.BALL_RADIUS > constants.GAME_AREA_HEIGHT)
+		{
+			this.mesh.position.y = constants.GAME_AREA_HEIGHT - constants.BALL_RADIUS
 			this.y_vel *= -1
-		if(this.mesh.position.y - BALL_RADIUS < GAME_AREA_HEIGHT * -1)
+		}
+		if(this.mesh.position.y - constants.BALL_RADIUS < constants.GAME_AREA_HEIGHT * -1)
+		{
+			this.mesh.position.y = constants.GAME_AREA_HEIGHT * -1 + constants.BALL_RADIUS
 			this.y_vel *= -1
-
+		}
 		if (this.x_vel < 0)
 		{
-			if (this.mesh.position.y <= player_one.mesh.position.y + PADDLE_HEIGHT / 2 && this.mesh.position.y >= player_one.mesh.position.y - PADDLE_HEIGHT / 2 && this.mesh.position.x > player_one.mesh.position.x)
+			if (this.mesh.position.y <= player_one.mesh.position.y + constants.PADDLE_HEIGHT / 2 && this.mesh.position.y >= player_one.mesh.position.y - constants.PADDLE_HEIGHT / 2 && this.mesh.position.x > player_one.mesh.position.x)
 			{
-				if(this.mesh.position.x - BALL_RADIUS <= player_one.mesh.position.x + PADDLE_WIDTH / 2)
+				if(this.mesh.position.x - constants.BALL_RADIUS <= player_one.mesh.position.x + constants.PADDLE_WIDTH / 2)
 				{
+					this.setcolor(constants.PLAYER_1_COLOR)
 					this.x_vel *= -1
 					var middle_y = player_one.mesh.position.y
 					var difference_in_y = middle_y - this.mesh.position.y
-					var reduction_factor = (PADDLE_HEIGHT / 2) / this.speed
+					var reduction_factor = (constants.PADDLE_HEIGHT / 2) / this.speed
 					var new_y_vel = difference_in_y / reduction_factor
 					this.y_vel = -1 * new_y_vel
 				}
@@ -84,14 +93,15 @@ export class Ball
 		}
 		else
 		{
-			if (this.mesh.position.y <= player_two.mesh.position.y + PADDLE_HEIGHT / 2 && this.mesh.position.y >= player_two.mesh.position.y - PADDLE_HEIGHT / 2 && this.mesh.position.x < player_two.mesh.position.x)
+			if (this.mesh.position.y <= player_two.mesh.position.y + constants.PADDLE_HEIGHT / 2 && this.mesh.position.y >= player_two.mesh.position.y - constants.PADDLE_HEIGHT / 2 && this.mesh.position.x < player_two.mesh.position.x)
 			{
-				if(this.mesh.position.x + BALL_RADIUS >= player_two.mesh.position.x - PADDLE_WIDTH / 2)
+				if(this.mesh.position.x + constants.BALL_RADIUS >= player_two.mesh.position.x - constants.PADDLE_WIDTH / 2)
 				{
+					this.setcolor(constants.PLAYER_2_COLOR)
 					this.x_vel *= -1
 					var middle_y = player_two.mesh.position.y
 					var difference_in_y = middle_y - this.mesh.position.y
-					var reduction_factor = (PADDLE_HEIGHT / 2) / this.speed
+					var reduction_factor = (constants.PADDLE_HEIGHT / 2) / this.speed
 					var new_y_vel = difference_in_y / reduction_factor
 					this.y_vel = -1 * new_y_vel
 				}

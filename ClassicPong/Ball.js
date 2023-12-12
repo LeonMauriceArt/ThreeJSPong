@@ -62,11 +62,16 @@ export class Ball
 	}
 	handle_ball_collision(player_one, player_two)
 	{
-		if (this.mesh.position.y + BALL_RADIUS > GAME_AREA_HEIGHT)
+		if (this.mesh.position.y + constants.BALL_RADIUS > constants.GAME_AREA_HEIGHT)
+		{
+			this.mesh.position.y = constants.GAME_AREA_HEIGHT - constants.BALL_RADIUS
 			this.y_vel *= -1
-		if(this.mesh.position.y - BALL_RADIUS < GAME_AREA_HEIGHT * -1)
+		}
+		if(this.mesh.position.y - constants.BALL_RADIUS < constants.GAME_AREA_HEIGHT * -1)
+		{
+			this.mesh.position.y = constants.GAME_AREA_HEIGHT * -1 + constants.BALL_RADIUS
 			this.y_vel *= -1
-
+		}
 		if (this.x_vel < 0)
 		{
 			if (this.mesh.position.y <= player_one.mesh.position.y + PADDLE_HEIGHT / 2 && this.mesh.position.y >= player_one.mesh.position.y - PADDLE_HEIGHT / 2 && this.mesh.position.x > player_one.mesh.position.x)

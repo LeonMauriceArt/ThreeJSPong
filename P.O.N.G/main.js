@@ -8,8 +8,13 @@ import {Wall} from './Arena.js'
 import {Ball} from './Ball.js'
 import * as constants from './Constants.js';
 
-var camera, orbitcontrols, renderer, player_one, player_two, ball, scene, player_one_score_text, player_two_score_text, droidFont
+var gameisover, camera, orbitcontrols, renderer, player_one, 
+player_two, ball, scene, 
+player_one_score_text, player_two_score_text, droidFont, winning_text,
+player_one_goal, player_two_goal
 const keys = {};
+
+gameisover = false
 
 const fontlLoader = new FontLoader();
 fontlLoader.load('node_modules/three/examples/fonts/droid/droid_sans_bold.typeface.json',
@@ -57,8 +62,8 @@ function init()
 function initArena()
 {
 	//Adding players
-	player_one = new Player((constants.GAME_AREA_WIDTH * -1) + 10, 0, constants.PADDLE_WIDTH, constants.PADDLE_HEIGHT, 0xffffff)
-	player_two = new Player(constants.GAME_AREA_WIDTH - 10, 0, constants.PADDLE_WIDTH, constants.PADDLE_HEIGHT, 0xffffff)
+	player_one = new Player((constants.GAME_AREA_WIDTH * -1) + 10, 0, constants.PADDLE_WIDTH, constants.PADDLE_HEIGHT,constants.PLAYER_1_COLOR)
+	player_two = new Player(constants.GAME_AREA_WIDTH - 10, 0, constants.PADDLE_WIDTH, constants.PADDLE_HEIGHT, constants.PLAYER_2_COLOR)
 	scene.add(player_one.mesh, player_two.mesh)
 
 	//Adding the ball
@@ -71,12 +76,12 @@ function initArena()
 	scene.add(upper_wall.mesh, lower_wall.mesh)
 	
 	//Creating and adding the two player goals
-	var player_one_goal = new THREE.Mesh(
+	player_one_goal = new THREE.Mesh(
 		new THREE.PlaneGeometry(20, constants.GAME_AREA_HEIGHT * 2, 1, 4),
 		material.wallMaterial)
 	player_one_goal.rotation.y = Math.PI / 2
 	player_one_goal.position.x = constants.GAME_AREA_WIDTH * -1
-	var player_two_goal = new THREE.Mesh(
+	player_two_goal = new THREE.Mesh(
 		new THREE.PlaneGeometry(20, constants.GAME_AREA_HEIGHT * 2, 1, 4),
 		material.wallMaterial)
 	player_two_goal.rotation.y = (Math.PI / 2) * -1
@@ -84,8 +89,8 @@ function initArena()
 	scene.add(player_one_goal, player_two_goal)
 
 	//Initiating the score text meshes
-	player_one_score_text = createTextMesh(droidFont, player_one.score.toString(), player_one_score_text, (constants.GAME_AREA_WIDTH / 2) * -1, 0,-80, 0xf0f0f0, 50);
-	player_two_score_text = createTextMesh(droidFont, player_two.score.toString(), player_two_score_text, constants.GAME_AREA_WIDTH / 2, 0,-80, 0xf0f0f0, 50);
+	player_one_score_text = createTextMesh(droidFont, player_one.score.toString(), player_one_score_text, (constants.GAME_AREA_WIDTH / 2) * -1, 0,-80, constants.PLAYER_1_COLOR, 50);
+	player_two_score_text = createTextMesh(droidFont, player_two.score.toString(), player_two_score_text, constants.GAME_AREA_WIDTH / 2, 0,-80, constants.PLAYER_2_COLOR, 50);
 	scene.add(player_one_score_text, player_two_score_text)
 }
 
@@ -106,14 +111,14 @@ function handle_scores()
 	{
 		player_one.score_point()
 		scene.remove(player_one_score_text)
-		player_one_score_text = createTextMesh(droidFont, player_one.score.toString(), player_one_score_text, (constants.GAME_AREA_WIDTH / 2) * -1, 0,-80, 0xf0f0f0, 50);
+		player_one_score_text = createTextMesh(droidFont, player_one.score.toString(), player_one_score_text, (constants.GAME_AREA_WIDTH / 2) * -1, 0,-80, constants.PLAYER_1_COLOR, 50);
 		scene.add(player_one_score_text)
 	}
 	else
 	{
 		player_two.score_point()
 		scene.remove(player_two_score_text)
-		player_two_score_text = createTextMesh(droidFont, player_two.score.toString(), player_two_score_text, constants.GAME_AREA_WIDTH / 2, 0,-80, 0xf0f0f0, 50);
+		player_two_score_text = createTextMesh(droidFont, player_two.score.toString(), player_two_score_text, constants.GAME_AREA_WIDTH / 2, 0,-80, constants.PLAYER_2_COLOR, 50);
 		scene.add(player_two_score_text)
 	}
 	ball.reset()
@@ -130,15 +135,11 @@ function winning()
 	scene.remove(player_one_score_text)
 	scene.remove(player_two_score_text)
 	if (player_one.score == constants.WINNING_SCORE)
-	{
-		player_one_score_text = createTextMesh(droidFont, "PLAYER 1 WIN", player_one_score_text, 0, 0, 0, 0xffffff, 13)
-		scene.add(player_one_score_text)
-	}
+		winning_text = createTextMesh(droidFont, "PLAYER 1 WIN", player_one_score_text, 0, 0, 0, constants.PLAYER_1_COLOR, 13)
 	else
-	{
-		player_two_score_text = createTextMesh(droidFont, "PLAYER 2 WIN", player_two_score_text, 0, 0, 0, 0xffffff, 13)
-		scene.add(player_two_score_text)
-	}
+		winning_text = createTextMesh(droidFont, "PLAYER 2 WIN", player_two_score_text, 0, 0, 0, constants.PLAYER_2_COLOR, 13)
+	scene.add(winning_text)
+	gameisover = true
 }
 
 //GameLoop
@@ -148,22 +149,29 @@ function animate() {
 	
 	orbitcontrols.update();
 
-	ball.update(player_one, player_two);
-	if (ball.mesh.position.x < constants.GAME_AREA_WIDTH * -1 || ball.mesh.position.x > constants.GAME_AREA_WIDTH)
-		handle_scores()
-	if (keys['ArrowUp']) {
-		player_two.move(true);
+	if (!gameisover)
+	{
+		ball.update(player_one, player_two);
+		if (ball.mesh.position.x < constants.GAME_AREA_WIDTH * -1 || ball.mesh.position.x > constants.GAME_AREA_WIDTH)
+			handle_scores()
+		if (keys['ArrowUp']) {
+			player_two.move(true);
+		}
+		if (keys['ArrowDown']) {
+			player_two.move(false);
+		}
+		if (keys['KeyW']) {
+			player_one.move(true);
+		}
+		if (keys['KeyS']) {
+			player_one.move(false);
+		}
 	}
-	if (keys['ArrowDown']) {
-		player_two.move(false);
+	else
+	{
+		winning_text.lookAt(camera.position)
+		scene.remove(player_one.mesh, player_two.mesh, player_one_goal, player_two_goal)
 	}
-	if (keys['KeyW']) {
-		player_one.move(true);
-	}
-	if (keys['KeyS']) {
-		player_one.move(false);
-	}
-	
 	render();
 }
 

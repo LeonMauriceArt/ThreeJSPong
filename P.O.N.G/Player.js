@@ -15,6 +15,7 @@ export class Player
 	  this.mesh = new THREE.Mesh(this.geometry, this.material);
 	  this.mesh.position.set(x, y, 0);
 	  this.score = 0;
+	  this.powerups = []
 	}
 	move(up)
 	{
@@ -42,5 +43,9 @@ export class Player
 	{
 		this.material.color.setHex(newcolor)
 		this.material.emissive.setHex(newcolor)
+	}
+	add_powerup(new_power)
+	{
+		
 	}
 }

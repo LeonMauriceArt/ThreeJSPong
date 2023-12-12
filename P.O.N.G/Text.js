@@ -16,7 +16,7 @@ export function createTextMesh(font, text, textMesh, x, y, z, fontcolor, fontsiz
 	});
 	
 	// Material
-	var textMaterial = new THREE.MeshBasicMaterial({ color: fontcolor });
+	var textMaterial = new THREE.MeshPhongMaterial({ emissive: fontcolor , emissiveIntensity: 10});
 	textGeometry.center();
 	
 	// Create mesh
