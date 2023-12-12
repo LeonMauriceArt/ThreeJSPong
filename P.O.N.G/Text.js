@@ -9,14 +9,17 @@ export function createTextMesh(font, text, textMesh, x, y, z, fontcolor, fontsiz
 		height: 1,
 		curveSegments: 1,
 		bevelEnabled: true,
-		bevelThickness: 1,
+		bevelThickness: 0.5,
 		bevelSize: 1,
 		bevelOffset: 0,
 		bevelSegments: 1
 	});
 	
 	// Material
-	var textMaterial = new THREE.MeshPhongMaterial({ emissive: fontcolor , emissiveIntensity: 10});
+	var textMaterial = new THREE.MeshPhongMaterial({
+		emissive: fontcolor,
+		emissiveIntensity: 5
+	});
 	textGeometry.center();
 	
 	// Create mesh
