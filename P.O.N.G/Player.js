@@ -15,7 +15,7 @@ export class Player
 	  this.mesh = new THREE.Mesh(this.geometry, this.material);
 	  this.mesh.position.set(x, y, 0);
 	  this.score = 0;
-	  this.powerups = []
+	  this.powerups = [];
 	}
 	move(up)
 	{
@@ -44,8 +44,14 @@ export class Player
 		this.material.color.setHex(newcolor)
 		this.material.emissive.setHex(newcolor)
 	}
-	add_powerup(new_power)
+	use_power()
 	{
-		
+		console.log("Cannot use power, dont have any...")
+		if (this.powerups.length != 0)
+		{
+			console.log("Using power !")
+			this.powerups[0].use()
+			this.powerups.pop()
+		}
 	}
 }

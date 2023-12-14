@@ -65,6 +65,12 @@ export class Ball
 			this.light.position.set(this.mesh.position.x, this.mesh.position.y)
 		}
 	}
+	
+	handle_powerup_collision(player_one, player_two, powerups)
+	{
+
+	}
+
 	handle_ball_collision(player_one, player_two)
 	{
 		if (this.mesh.position.y + constants.BALL_RADIUS > constants.GAME_AREA_HEIGHT)

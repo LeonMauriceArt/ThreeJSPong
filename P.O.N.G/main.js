@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { FontLoader } from '../node_modules/three/examples/jsm/loaders/FontLoader.js';
 import { createTextMesh } from './Text.js';
@@ -8,11 +8,13 @@ import {Wall} from './Arena.js'
 import {Ball} from './Ball.js'
 import { ScreenShake } from './ScreenShake.js';
 import * as constants from './Constants.js';
+import { Power_Manager } from './Powerups.js';
 
 var gameisover, camera, orbitcontrols, renderer, player_one, 
 player_two, ball, scene, 
 player_one_score_text, player_two_score_text, droidFont, winning_text,
-player_one_goal, player_two_goal
+player_one_goal, player_two_goal,
+powerup_manager
 
 const keys = {};
 
@@ -74,6 +76,9 @@ function initArena()
 	ball = new Ball()
 	scene.add(ball.mesh, ball.light)
 
+	//Adding the powerup_manager
+	powerup_manager = new Power_Manager()
+
 	//Adding the floor and roof
 	var upper_wall = new Wall(constants.GAME_AREA_HEIGHT, 300, material.wallMaterial)
 	var lower_wall = new Wall(constants.GAME_AREA_HEIGHT * -1, 300, material.wallMaterial)
@@ -105,7 +110,6 @@ function initControls(){
 	orbitcontrols.dampingFactor = 0.05;
 	orbitcontrols.enabled = false
 	orbitcontrols.screenSpacePanning = true;
-
 	window.addEventListener('keydown', handleKeyDown);
 	window.addEventListener('keyup', handleKeyUp);
 }
@@ -141,6 +145,8 @@ function winning()
 	ball.stop();
 	scene.remove(player_one_score_text)
 	scene.remove(player_two_score_text)
+	if (powerup_manager.array[0])
+		scene.remove(powerup_manager.array[0].mesh)
 	var light1;
 	var light2;
 	if (player_one.score == constants.WINNING_SCORE)
@@ -165,6 +171,28 @@ function winning()
 	gameisover = true
 }
 
+function handle_input(player_one, player_two)
+{
+	if (keys['ArrowUp'])
+		player_two.move(true);
+	if (keys['ArrowDown'])
+		player_two.move(false);
+	if (keys['KeyW'])
+		player_one.move(true);
+	if (keys['KeyS'])
+		player_one.move(false);
+	if (keys['KeyD'])
+	{
+		if (player_one.powerups.lenght == 1)
+			player_one.use_power();
+	}
+	if (keys['ArrowLeft'])
+	{
+		if (player_two.powerups.lenght == 1)
+			player_two.use_power();
+	}
+}
+
 //GameLoop
 function animate() {
 	
@@ -173,21 +201,11 @@ function animate() {
 	
 	if (!gameisover)
 	{
+		powerup_manager.update(player_one, player_two, ball, scene)
 		ball.update(player_one, player_two);
 		if (ball.mesh.position.x < constants.GAME_AREA_WIDTH * -1 || ball.mesh.position.x > constants.GAME_AREA_WIDTH)
 		handle_scores()
-	if (keys['ArrowUp']) {
-		player_two.move(true);
-	}
-	if (keys['ArrowDown']) {
-		player_two.move(false);
-		}
-		if (keys['KeyW']) {
-			player_one.move(true);
-		}
-		if (keys['KeyS']) {
-			player_one.move(false);
-		}
+		handle_input(player_one, player_two);
 	}
 	else
 	{

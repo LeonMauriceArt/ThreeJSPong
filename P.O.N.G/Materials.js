@@ -22,7 +22,7 @@ export const wallMaterial = new THREE.MeshPhongMaterial({
 
 export const powerWallMaterial = new THREE.MeshPhongMaterial({
 	emissive: 0xff00ff,
-	emissiveIntensity: 0.1,
+	emissiveIntensity: 3,
 	wireframe: true,
 })
 

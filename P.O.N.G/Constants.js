@@ -9,7 +9,7 @@ export const CAMERA_STARTPOS_Z = GAME_AREA_WIDTH + 80
 export const WINNING_SCORE = 3
 
 export const PADDLE_WIDTH = 5
-export const PADDLE_HEIGHT = 23
+export const PADDLE_HEIGHT = 20
 
 export const BALL_RADIUS = 2
 export const BALL_SPEED = 1.5
@@ -19,6 +19,7 @@ export const PLAYER_SPEED = 1
 export const PLAYER_CURSED_HEIGHT = PADDLE_HEIGHT / 3 
 
 export const POWER_RADIUS = 2
+export const POWER_RESPAWN_TIME = 3
 export const POWER_SPAWNAREA_WIDTH = GAME_AREA_WIDTH * 0.8
 export const POWER_SPAWNAREA_HEIGHT = GAME_AREA_HEIGHT * 0.8
 export const POWER_WALL_DURATION = 0.5
