@@ -146,7 +146,7 @@ function winning()
 	scene.remove(player_one_score_text)
 	scene.remove(player_two_score_text)
 	if (powerup_manager.array[0])
-		scene.remove(powerup_manager.array[0].mesh)
+		scene.remove(powerup_manager.array[0].mesh, powerup_manager.array[0].light)
 	var light1;
 	var light2;
 	if (player_one.score == constants.WINNING_SCORE)
@@ -182,15 +182,9 @@ function handle_input(player_one, player_two)
 	if (keys['KeyS'])
 		player_one.move(false);
 	if (keys['KeyD'])
-	{
-		if (player_one.powerups.lenght == 1)
-			player_one.use_power();
-	}
+		player_one.use_power(powerup_manager);
 	if (keys['ArrowLeft'])
-	{
-		if (player_two.powerups.lenght == 1)
-			player_two.use_power();
-	}
+		player_two.use_power(powerup_manager);
 }
 
 //GameLoop

@@ -11,6 +11,7 @@ export const lineMaterial = new THREE.LineBasicMaterial({
 
 export const ballMaterial = new THREE.MeshPhongMaterial({
 	emissive: 0xffffff,
+	color: 0xffffff,
 	side: THREE.BackSide
 })
 
@@ -22,8 +23,9 @@ export const wallMaterial = new THREE.MeshPhongMaterial({
 
 export const powerWallMaterial = new THREE.MeshPhongMaterial({
 	emissive: 0xff00ff,
+	color: 0xff00ff,
 	emissiveIntensity: 3,
-	wireframe: true,
+	wireframe: false,
 })
 
 
