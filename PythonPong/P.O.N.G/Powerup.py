@@ -20,7 +20,7 @@ class Powerup:
 			return (0, 255, 0)
 		elif self.type == POWERUP_WALL:
 			return (255, 0, 255)
-		elif self.type == POWERUP_CURSE:
+		elif self.type == POWERUP_CURSE:d
 			return (0, 255, 255)
 
 	def draw(self, win):

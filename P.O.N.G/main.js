@@ -13,8 +13,8 @@ import { Power_Manager } from './Powerups.js';
 var gameisover, camera, orbitcontrols, renderer, player_one, 
 player_two, ball, scene, 
 player_one_score_text, player_two_score_text, droidFont, winning_text,
-player_one_goal, player_two_goal,
-powerup_manager
+player_one_goal, player_two_goal
+// powerup_manager
 
 const keys = {};
 
@@ -77,7 +77,7 @@ function initArena()
 	scene.add(ball.mesh, ball.light)
 
 	//Adding the powerup_manager
-	powerup_manager = new Power_Manager()
+	// powerup_manager = new Power_Manager()
 
 	//Adding the floor and roof
 	var upper_wall = new Wall(constants.GAME_AREA_HEIGHT, 300, material.wallMaterial)
@@ -145,8 +145,8 @@ function winning()
 	ball.stop();
 	scene.remove(player_one_score_text)
 	scene.remove(player_two_score_text)
-	if (powerup_manager.array[0])
-		scene.remove(powerup_manager.array[0].mesh, powerup_manager.array[0].light)
+	// if (powerup_manager.array[0])
+	// 	scene.remove(powerup_manager.array[0].mesh, powerup_manager.array[0].light)
 	var light1;
 	var light2;
 	if (player_one.score == constants.WINNING_SCORE)
@@ -181,10 +181,10 @@ function handle_input(player_one, player_two)
 		player_one.move(true);
 	if (keys['KeyS'])
 		player_one.move(false);
-	if (keys['KeyD'])
-		player_one.use_power(powerup_manager);
-	if (keys['ArrowLeft'])
-		player_two.use_power(powerup_manager);
+	// if (keys['KeyD'])
+	// 	player_one.use_power(powerup_manager);
+	// if (keys['ArrowLeft'])
+	// 	player_two.use_power(powerup_manager);
 }
 
 //GameLoop
@@ -195,7 +195,7 @@ function animate() {
 	
 	if (!gameisover)
 	{
-		powerup_manager.update(player_one, player_two, ball, scene)
+		// powerup_manager.update(player_one, player_two, ball, scene)
 		ball.update(player_one, player_two);
 		if (ball.mesh.position.x < constants.GAME_AREA_WIDTH * -1 || ball.mesh.position.x > constants.GAME_AREA_WIDTH)
 		handle_scores()

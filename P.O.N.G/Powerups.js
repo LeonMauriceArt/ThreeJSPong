@@ -64,18 +64,18 @@ export class Power_Manager
 				
 		}
 	}
-	power_wall_effect(scene)
-	{
+	// power_wall_effect(scene)
+	// {
 
-	}
-	power_reverse_effect(ball)
-	{
+	// }
+	// power_reverse_effect(ball)
+	// {
 
-	}
-	power_curse_effect(player_one, player_two, player_casting)
-	{
+	// }
+	// power_curse_effect(player_one, player_two, player_casting)
+	// {
 
-	}
+	// }
 }
 
 function getRandomInt(min, max) {
