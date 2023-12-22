@@ -47,7 +47,7 @@ class Ball:
 #Handling ball collision
 def handle_ball_collision(ball, left_player, right_player, wall):
 	#Handling ceiling and floor collision
-	if ball.y + ball.radius >= HEIGHT:
+	if ball.y + ball.radius >= WIN_HEIGHT:
 		ball.y_vel *= -1
 	elif ball.y - ball.radius <= 0:
 		ball.y_vel *= -1
@@ -58,7 +58,7 @@ def handle_ball_collision(ball, left_player, right_player, wall):
 		if ball.x >= WIDTH//2:
 			if ball.x - wall.width <= WIDTH//2 + wall.width and wall.isActive:
 				ball.x_vel *= -1
-				middle_y = HEIGHT//2
+				middle_y = WIN_HEIGHT//2
 				difference_in_y = middle_y - ball.y
 				reduction_factor = (middle_y / 2) / BALL_SPEED
 				y_vel = difference_in_y / reduction_factor
@@ -81,7 +81,7 @@ def handle_ball_collision(ball, left_player, right_player, wall):
 		if ball.x <= WIDTH//2:
 			if ball.x + wall.width >= WIDTH//2 - wall.width and wall.isActive:
 				ball.x_vel *= -1
-				middle_y = HEIGHT//2
+				middle_y = WIN_HEIGHT//2
 				difference_in_y = middle_y - ball.y
 				reduction_factor = (middle_y / 2) / BALL_SPEED
 				y_vel = difference_in_y / reduction_factor

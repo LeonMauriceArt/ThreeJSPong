@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-WIDTH, HEIGHT = 700, 500
+WIDTH, WIN_HEIGHT = 700, 500
 
 FPS = 60
 

@@ -15,24 +15,29 @@ class Player:
 	#Movement speed of the paddle
 	VEL = 5
 
-	def __init__(self, x, y, width, height, color):
-		self.x = x
-		self.y = y
-		self.width = width
-		self.height = height
-		self.color = color
+	def __init__(self, position):
+		self.position = position
+		#h for horizontal, v for vertical
+		self.orientation = None
+		self.x = None
+		self.y = None
+		self.width = PADDLE_WIDTH
+		self.height = PADDLE_HEIGHT
+		self.color = None
 		self.powerups = []
 		self.curse_time_start = 0
 
+	def init_from_pos(position):
+		
 	#paddle draw function
 	def draw(self, win):
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
 
 	#Move function
-	def move(self, up=True):
-		if up:
+	def move(self, up=True, side=True):
+		if up and self.y - self.VEL >= 0:
 			self.y -= self.VEL
-		else:
+		elif not up and self.y + self.VEL + self.height <= WIN_HEIGHT:
 			self.y += self.VEL
 
 	def curse_opponent(self, opponent):
@@ -49,11 +54,11 @@ class Player:
 				opponent.y = 0
 
 			# Ensure the rectangle doesn't go below the bottom
-			if opponent.y + opponent.height > HEIGHT:
-				opponent.y = HEIGHT - opponent.height
+			if opponent.y + opponent.height > WIN_HEIGHT:
+				opponent.y = WIN_HEIGHT - opponent.height
 
 	def reset(self):
-		self.y = HEIGHT//2 - PADDLE_HEIGHT//2
+		self.y = WIN_HEIGHT//2 - PADDLE_HEIGHT//2
 
 	def add_powerup(self, powerup):
 		if not self.powerups:
@@ -89,17 +94,26 @@ class Player:
 #Handling key pressing for paddle movement
 def handle_inputs(keys, left_player, right_player, ball, wall):
 	#Left paddle input
-	if keys[pygame.K_w] and left_player.y - left_player.VEL >= 0:
+	if keys[pygame.K_w] :
 		left_player.move(up=True)
-	if keys[pygame.K_s] and left_player.y + left_player.VEL + left_player.height <= HEIGHT:
+	if keys[pygame.K_s] :
 		left_player.move(up=False)
 	if keys[pygame.K_d]:
 		left_player.use_powerup("Left Player", wall, ball, right_player)
 	#Right paddle input
 	if keys[pygame.K_UP] and right_player.y - right_player.VEL >= 0:
 		right_player.move(up=True)
-	if keys[pygame.K_DOWN] and right_player.y + right_player.VEL + right_player.height <= HEIGHT:
+	if keys[pygame.K_DOWN] and right_player.y + right_player.VEL + right_player.height <= WIN_HEIGHT:
 		right_player.move(up=False)
 	if keys[pygame.K_LEFT]:
 		right_player.use_powerup("Right Player", wall, ball, left_player)
 
+
+def return_player_to_normal(player):
+	current_time = pygame.time.get_ticks()
+	if left_player.height == POWERUP_CURSE_SIZE and (current_time - left_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
+		left_player.height = PADDLE_HEIGHT
+		left_player.CURSE_time_start = 0
+	if right_player.height == POWERUP_CURSE_SIZE and (current_time - right_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
+		right_player.height = PADDLE_HEIGHT
+		right_player.CURSE_time_start = 0

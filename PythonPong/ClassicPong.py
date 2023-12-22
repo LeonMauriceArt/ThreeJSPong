@@ -1,8 +1,8 @@
 import pygame
 pygame.init()
 
-WIDTH, HEIGHT = 700, 500
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIDTH, WIN_HEIGHT = 700, 500
+WIN = pygame.display.set_mode((WIDTH, WIN_HEIGHT))
 pygame.display.set_caption("LeoPong")
 
 FPS = 60
@@ -43,7 +43,7 @@ class Paddle:
 			self.y += self.VEL
 
 	def reset(self):
-		self.y = HEIGHT//2 - PADDLE_HEIGHT//2
+		self.y = WIN_HEIGHT//2 - PADDLE_HEIGHT//2
 
 #Ball class
 class Ball:
@@ -93,10 +93,10 @@ def draw(win, paddles, ball, left_score, right_score):
 		paddle.draw(win)
 	
 	#Drawing the middle line
-	for i in range (10, HEIGHT, HEIGHT//20):
+	for i in range (10, WIN_HEIGHT, WIN_HEIGHT//20):
 		if i % 2 == 1:
 			continue
-		pygame.draw.rect(win, GREY, (WIDTH//2 - 3, i, 6, HEIGHT//20))
+		pygame.draw.rect(win, GREY, (WIDTH//2 - 3, i, 6, WIN_HEIGHT//20))
 
 	ball.draw(win)
 
@@ -105,7 +105,7 @@ def draw(win, paddles, ball, left_score, right_score):
 #Handling ball collision
 def handle_ball_collision(ball, left_player, right_player):
 	#Handling ceiling and floor collision
-	if ball.y + ball.radius >= HEIGHT:
+	if ball.y + ball.radius >= WIN_HEIGHT:
 		ball.y_vel *= -1
 	elif ball.y - ball.radius <= 0:
 		ball.y_vel *= -1
@@ -141,12 +141,12 @@ def handle_inputs(keys, left_player, right_player):
 	#Left paddle input
 	if keys[pygame.K_w] and left_player.y - left_player.VEL >= 0:
 		left_player.move(up=True)
-	if keys[pygame.K_s] and left_player.y + left_player.VEL + left_player.height <= HEIGHT:
+	if keys[pygame.K_s] and left_player.y + left_player.VEL + left_player.height <= WIN_HEIGHT:
 		left_player.move(up=False)
 	#Right paddle input
 	if keys[pygame.K_UP] and right_player.y - right_player.VEL >= 0:
 		right_player.move(up=True)
-	if keys[pygame.K_DOWN] and right_player.y + right_player.VEL + right_player.height <= HEIGHT:
+	if keys[pygame.K_DOWN] and right_player.y + right_player.VEL + right_player.height <= WIN_HEIGHT:
 		right_player.move(up=False)
 
 
@@ -155,9 +155,9 @@ def main():
 	run = True
 	clock = pygame.time.Clock()
 
-	left_player = Paddle(10, HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
-	right_player = Paddle(WIDTH - 10 - PADDLE_WIDTH, HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
-	ball = Ball(WIDTH//2, HEIGHT//2, BALL_RADIUS)
+	left_player = Paddle(10, WIN_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
+	right_player = Paddle(WIDTH - 10 - PADDLE_WIDTH, WIN_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
+	ball = Ball(WIDTH//2, WIN_HEIGHT//2, BALL_RADIUS)
 
 	left_score = 0
 	right_score = 0

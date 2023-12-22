@@ -15,7 +15,7 @@ class Wall:
 	#paddle draw function
 	def draw(self, win):
 		if self.isActive:
-			pygame.draw.rect(win, self.color, (WIDTH//2 - WALL_WIDTH//2, 0, self.width, HEIGHT))
+			pygame.draw.rect(win, self.color, (WIDTH//2 - WALL_WIDTH//2, 0, self.width, WIN_HEIGHT))
 
 	def activate(self, color):
 		self.time_since_active = pygame.time.get_ticks()

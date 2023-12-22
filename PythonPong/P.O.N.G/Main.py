@@ -4,6 +4,7 @@ import Powerup
 import Colors
 import config
 import Wall
+import sys
 
 from Wall import Wall
 from config import *
@@ -15,17 +16,17 @@ from Colors import *
 POWERUP_SPAWN_INTERVAL = 5
 
 #DISPLAY INIT
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIN = pygame.display.set_mode((WIDTH, WIN_HEIGHT))
 pygame.display.set_caption("P.O.N.G")
 
 #draw function to update the display of the background, paddles and everything else
 def draw(win, paddles, ball, left_score, right_score, powerups, wall):
 	win.fill(BLACK)
 	#Drawing the middle line
-	for i in range (10, HEIGHT, HEIGHT//20):
+	for i in range (10, WIN_HEIGHT, WIN_HEIGHT//20):
 		if i % 2 == 1:
 			continue
-		pygame.draw.rect(win, GREY, (WIDTH//2 - 3, i, 6, HEIGHT//20))
+		pygame.draw.rect(win, GREY, (WIDTH//2 - 3, i, 6, WIN_HEIGHT//20))
 	left_score_text = SCORE_FONT.render(f"{left_score}", 1, PLAYER_1_COLOR)
 	right_score_text = SCORE_FONT.render(f"{right_score}", 1, PLAYER_2_COLOR)
 	win.blit(left_score_text, (WIDTH//4 - left_score_text.get_width()//2, 20))
@@ -37,6 +38,7 @@ def draw(win, paddles, ball, left_score, right_score, powerups, wall):
 	for powerup in powerups:
 		powerup.draw(win)
 	
+	#updating 
 	wall.draw(win)
 
 	ball.draw(win)
@@ -49,23 +51,37 @@ def power_can_spawn(powerups, last_empty_time):
 		return True
 	return False
 
-def return_player_to_normal(left_player, right_player):
-	current_time = pygame.time.get_ticks()
-	if left_player.height == POWERUP_CURSE_SIZE and (current_time - left_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
-		left_player.height = PADDLE_HEIGHT
-		left_player.CURSE_time_start = 0
-	if right_player.height == POWERUP_CURSE_SIZE and (current_time - right_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
-		right_player.height = PADDLE_HEIGHT
-		right_player.CURSE_time_start = 0
+def get_num_of_players():
+	if len(sys.argv) != 2:
+		return 2
+	else:
+		number_of_players = int(sys.argv[1])
+		if number_of_players < 2:
+			return 2
+		if number_of_players > 4:
+			return 4
+		return number_of_players
+
+# def handle_score(ball):
+
+def init_players(num_of_players):
+	players[]
+	persons = [Person(f'Person {i}') for i in range(num_of_players)]
+	return players[]
 
 #Main function
 def main():
+	player_num = get_num_of_players()
+
+	#init players
+	players[] = init_players(player_num)
+
 	run = True
 	clock = pygame.time.Clock()
 
-	left_player = Player(10, HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER_1_COLOR)
-	right_player = Player(WIDTH - 10 - PADDLE_WIDTH, HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER_2_COLOR)
-	ball = Ball(WIDTH//2, HEIGHT//2, BALL_RADIUS, WHITE)
+	left_player = Player(10, WIN_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER_1_COLOR)
+	right_player = Player(WIDTH - 10 - PADDLE_WIDTH, WIN_HEIGHT//2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT, PLAYER_2_COLOR)
+	ball = Ball(WIDTH//2, WIN_HEIGHT//2, BALL_RADIUS, WHITE)
 	wall = Wall()
 
 	#handling powerups instances
