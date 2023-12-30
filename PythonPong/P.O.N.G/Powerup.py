@@ -1,10 +1,5 @@
-import config
-import Colors
 import random
 import math
-
-from config import *
-from Colors import *
 
 class Powerup:
 	def __init__(self, x, y, radius, type):

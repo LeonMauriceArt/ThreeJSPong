@@ -1,29 +1,13 @@
-import Ball
-import Players
-import Powerup
-import Colors
-import config
-import Wall
+import pygame
 import sys
-
-from Wall import Wall
-from config import *
-from Players import *
-from Powerup import *
-from Ball import *
-from Colors import *
-
-#DISPLAY INIT
-WIN = None
+import config
+import Player
+import Ball
+import Wall
 
 #draw function to update the display of the background, players and everything else
 def draw(win, players, ball, powerups, wall):
 	win.fill(BLACK)
-	#Drawing the middle line
-	for i in range (10, WIN_HEIGHT, WIN_HEIGHT//20):
-		if i % 2 == 1:
-			continue
-		pygame.draw.rect(win, GREY, (WIN_WIDTH//2 - 3, i, 6, WIN_HEIGHT//20))
 
 	# left_score_text = SCORE_FONT.render(f"{left_score}", 1, PLAYER_1_COLOR)
 	# right_score_text = SCORE_FONT.render(f"{right_score}", 1, PLAYER_2_COLOR)
@@ -59,8 +43,8 @@ def init_players(num_of_players): #init players
 
 #Main function
 def main():
+	pygame.init()
 	NUM_OF_PLAYERS = get_num_of_players()
-
 	if NUM_OF_PLAYERS > 2:
 		WIN_WIDTH = WIN_HEIGHT # if there is more than 2 player, the game area should be a square
 	WIN = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT)) # pygame window init
@@ -70,7 +54,6 @@ def main():
 	players = init_players(NUM_OF_PLAYERS)
 	for player in players:
 		player.init_from_pos(player.position)
-		print(player.x, player.y, player.width, player.height)
 
 	run = True
 	clock = pygame.time.Clock()
@@ -92,26 +75,28 @@ def main():
 				run = False
 				break
 
-		if power_can_spawn(powerups, last_empty_time):
-			powerups.append(spawn_power()) 
+		# if power_can_spawn(powerups, last_empty_time):
+		# 	powerups.append(spawn_power()) 
 
 		keys = pygame.key.get_pressed()
 		handle_inputs(keys, players, ball, wall)
 		ball.move()
-		handle_ball_collision(ball, left_player, right_player, wall)
+		handle_ball_collision(ball, players, wall)
 
-		if powerups:
-			if handle_power_collision(ball, powerups[0], left_player, right_player):
-				powerups.pop(0)
-				last_empty_time = pygame.time.get_ticks()
+		# if powerups:
+		# 	if handle_power_collision(ball, powerups[0], left_player, right_player):
+		# 		powerups.pop(0)
+		# 		last_empty_time = pygame.time.get_ticks()
 
 		ball.update()
 		wall.update()
-		left_player.update()
-		right_player.update()
-		
+		for player in players:
+			player.update()
+
+		if handle_score(players, ball):
+			break
 
 	pygame.quit()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()

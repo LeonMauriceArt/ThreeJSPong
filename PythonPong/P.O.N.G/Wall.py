@@ -1,9 +1,5 @@
 import pygame
-import config
-import Colors
 
-from Colors import *
-from config import *
 
 class Wall:
 	def __init__(self):

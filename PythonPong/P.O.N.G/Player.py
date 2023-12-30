@@ -1,14 +1,7 @@
 import pygame
 
 import config
-import Powerup
-import Wall
-import Ball
-
-from Wall import Wall
-from Ball import *
-from Powerup import *
-from config import *
+import Main
 
 #Player class
 class Player:
@@ -26,20 +19,19 @@ class Player:
 		self.powerups = []
 		self.score = 0 #personnal score of the player
 		self.curse_time_start = 0
-		self.init_from_pos(position)
 
 	def init_from_pos(self, position):
-		print("JE VEUX INIT FROM", position)
+		print(WIN_WIDTH, WIN_HEIGHT)
 		if position == "Player 0": #left player
 			self.orientation = 'v'
-			self.x = 10
+			self.x = WIN_WIDTH // 50
 			self.y = WIN_HEIGHT // 2
 			self.width = PLAYER_WIDTH
 			self.height = PLAYER_HEIGHT
 			self.color = PLAYER_1_COLOR 
 		elif position == "Player 1": #right player
 			self.orientation = 'v'
-			self.x = WIN_WIDTH - 10
+			self.x = WIN_WIDTH - WIN_WIDTH // 50
 			self.y = WIN_HEIGHT // 2
 			self.width = PLAYER_WIDTH
 			self.height = PLAYER_HEIGHT
@@ -47,30 +39,34 @@ class Player:
 		elif position == "Player 2" : #bottom player
 			self.orientation = 'h'
 			self.x = WIN_WIDTH // 2
-			self.y = WIN_HEIGHT - 10
+			self.y = WIN_HEIGHT - WIN_HEIGHT // 50
 			self.width = PLAYER_HEIGHT
 			self.height = PLAYER_WIDTH
 			self.color = PLAYER_3_COLOR 
 		elif position == "Player 3" : #top player
 			self.orientation = 'h'
 			self.x = WIN_WIDTH // 2
-			self.y = 10
+			self.y = WIN_HEIGHT // 50
 			self.width = PLAYER_HEIGHT
 			self.height = PLAYER_WIDTH
 			self.color = PLAYER_4_COLOR 
 	
 	def draw(self, win): #player draw function
-		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
-
-	# def draw(self, win):
-		# pygame.draw.rect(win, self.COLOR, (self.x, self.y, self.width, self.height))
+		# print("---", self.position, " | ", self.orientation, self.x, self.y, self.width, self.height, self.color)
+		pygame.draw.rect(win, self.color, (self.x - self.width // 2, self.y - self.height // 2, self.width, self.height))
 
 	#Move function
-	def move(self, up=True, side=True):
-		if up and self.y - self.VEL >= 0:
-			self.y -= self.VEL
-		elif not up and self.y + self.VEL + self.height <= WIN_HEIGHT:
-			self.y += self.VEL
+	def move(self, up=True):
+		if self.orientation == 'v' :
+			if up and self.y - self.VEL - self.height // 2 >= 0:
+				self.y -= self.VEL
+			elif not up and self.y + self.VEL + self.height // 2 <= WIN_HEIGHT:
+				self.y += self.VEL
+		elif self.orientation == 'h' :
+			if up and self.x + self.VEL + self.width // 2 <= WIN_WIDTH:
+				self.x += self.VEL
+			elif not up and self.x - self.VEL - self.width // 2 >= 0:
+				self.x -= self.VEL
 
 	def curse_opponent(self, opponent):
 		if opponent.height != POWERUP_CURSE_SIZE:
@@ -126,20 +122,27 @@ class Player:
 #Handling key pressing for paddle movement
 def handle_inputs(keys, players, ball, wall):
 	#Left paddle input
-	if keys[pygame.K_w] :
-		left_player.move(up=True)
-	if keys[pygame.K_s] :
-		left_player.move(up=False)
-	if keys[pygame.K_d]:
-		left_player.use_powerup("Left Player", wall, ball, right_player)
-	#Right paddle input
-	if keys[pygame.K_UP] and right_player.y - right_player.VEL >= 0:
-		right_player.move(up=True)
-	if keys[pygame.K_DOWN] and right_player.y + right_player.VEL + right_player.height <= WIN_HEIGHT:
-		right_player.move(up=False)
-	if keys[pygame.K_LEFT]:
-		right_player.use_powerup("Right Player", wall, ball, left_player)
+	if keys[pygame.K_UP] :
+		for player in players:
+			if player.orientation == 'v':
+				player.move(up=True)
+	if keys[pygame.K_DOWN] :
+		for player in players:
+			if player.orientation == 'v':
+				player.move(up=False)	
+	if keys[pygame.K_LEFT] :
+		for player in players:
+			if player.orientation == 'h':
+				player.move(up=False)
+	if keys[pygame.K_RIGHT] :
+		for player in players:
+			if player.orientation == 'h':
+				player.move(up=True)
 
+	#---POWERUP USAGE NEED TO BE REWORKED---
+	# if keys[pygame.K_SPACE]:
+	# 	for player in players:
+	# 		player.use_powerup()
 
 def return_player_to_normal(player):
 	current_time = pygame.time.get_ticks()
@@ -155,7 +158,7 @@ def handle_score(players, ball):
 		players[0].score += 1
 		ball.reset()
 	elif ball.x > WIN_WIDTH:
-		left_score += 1
+		players[1].score += 1
 		ball.reset()
 
 	if NUM_OF_PLAYERS > 2:
@@ -167,9 +170,7 @@ def handle_score(players, ball):
 			ball.reset()
 
 	#handle winning
-	if left_score >= WINNING_SCORE or right_score >= WINNING_SCORE:
-		left_score = 0
-		right_score = 0
-		left_player.reset()
-		right_player.reset()
-		ball.reset()
+	for player in players:
+		if player.score == WINNING_SCORE:
+			print("PLAYER", player.position, "WON !")
+			return (True)

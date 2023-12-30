@@ -1,8 +1,5 @@
-import config
-import Colors
+import pygame 
 
-from config import *
-from Colors import *
 
 #Ball class
 class Ball:
@@ -44,67 +41,32 @@ class Ball:
 				self.direction = 0
 
 
-#Handling ball collision
-def handle_ball_collision(ball, left_player, right_player, wall):
-	#Handling ceiling and floor collision
-	if ball.y + ball.radius >= WIN_HEIGHT:
-		ball.y_vel *= -1
-	elif ball.y - ball.radius <= 0:
+def handle_ball_collision(ball, players, wall):
+    
+	if ball.y + ball.radius >= WIN_HEIGHT or ball.y - ball.radius <= 0: # Handling ceiling and floor collision
 		ball.y_vel *= -1
 
-	#Handling left paddle collision with ball
-	if ball.x_vel < 0:
-		#Wall collision
-		if ball.x >= WIN_WIDTH//2:
-			if ball.x - wall.width <= WIN_WIDTH//2 + wall.width and wall.isActive:
-				ball.x_vel *= -1
-				middle_y = WIN_HEIGHT//2
-				difference_in_y = middle_y - ball.y
-				reduction_factor = (middle_y / 2) / BALL_SPEED
-				y_vel = difference_in_y / reduction_factor
-				ball.y_vel = -1 * y_vel
-		#Player collision
-		elif ball.y >= left_player.y and ball.y <= left_player.y + left_player.height:
-			if ball.x - ball.radius <= left_player.x + left_player.width:
-				#ball is hitting and bouncing off the left paddle
-				ball.x_vel *= -1
-				ball.color = PLAYER_1_COLOR
-				#handling ball y direction based on where it hits
-				middle_y = left_player.y + left_player.height / 2
-				difference_in_y = middle_y - ball.y
-				reduction_factor = (left_player.height / 2) / BALL_SPEED
-				y_vel = difference_in_y / reduction_factor
-				ball.y_vel = -1 * y_vel
-	#Handling right paddle collision with ball
-	else:
-		#Wall collision
-		if ball.x <= WIN_WIDTH//2:
-			if ball.x + wall.width >= WIN_WIDTH//2 - wall.width and wall.isActive:
-				ball.x_vel *= -1
-				middle_y = WIN_HEIGHT//2
-				difference_in_y = middle_y - ball.y
-				reduction_factor = (middle_y / 2) / BALL_SPEED
-				y_vel = difference_in_y / reduction_factor
-				ball.y_vel = -1 * y_vel
-		#Player collision
-		elif ball.y >= right_player.y and ball.y <= right_player.y + right_player.height:
-			if ball.x + ball.radius >= right_player.x:
-				#ball is hitting and bouncing off the right paddle
-				ball.x_vel *= -1
-				ball.color = PLAYER_2_COLOR
-				#handling ball y direction based on where it hits
-				middle_y = right_player.y + right_player.height / 2
-				difference_in_y = middle_y - ball.y
-				reduction_factor = (right_player.height / 2) / BALL_SPEED
-				y_vel = difference_in_y / reduction_factor
-				ball.y_vel = -1 * y_vel
-
-    # for player in [player1, player2, player3, player4]:
-    #     if isCollision(ball, player):
-    #         p_x, p_y = player.position()
-
-    #         if abs(p_x - x) > abs(p_y - y):
-    #             ball.dx *= -1
-    #         else:
-    #             ball.dy *= -1
-    #         break
+	# # Wall collision
+	# if ball.x_vel < 0 and ball.x >= WIN_WIDTH // 2 or ball.x_vel > 0 and ball.x <= WIN_WIDTH // 2:
+	# 	if (
+	# 		ball.x - wall.width <= WIN_WIDTH // 2 + wall.width
+	# 		and wall.isActive
+	# 	):
+	# 		ball.x_vel *= -1
+	# 		middle_y = WIN_HEIGHT // 2
+	# 		difference_in_y = middle_y - ball.y
+	# 		reduction_factor = (middle_y / 2) / BALL_SPEED
+	# 		y_vel = difference_in_y / reduction_factor
+	# 		ball.y_vel = -1 * y_vel
+    # Iterate over each player for collision detection
+	for player in players:
+		if player.orientation == 'v' :
+			if ball.y >= player.y - player.height // 2 and ball.y <= player.y + player.height // 2 :
+				if ball.x + ball.radius >= player.x - player.width // 2 and ball.x - ball.radius <= player.x + player.width // 2 :
+					ball.x_vel *= -1
+					ball.color = player.color
+					middle_y = player.y + player.height / 2
+					difference_in_y = middle_y - ball.y
+					reduction_factor = (player.height / 2) / BALL_SPEED
+					y_vel = difference_in_y / reduction_factor
+					ball.y_vel = -1 * y_vel
