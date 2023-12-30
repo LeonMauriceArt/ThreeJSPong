@@ -14,24 +14,56 @@ from config import *
 class Player:
 	#Movement speed of the paddle
 	VEL = 5
+	orientation = None	#h for horizontal, v for vertical
+	x = None
+	y = None
+	width = None
+	height = None
+	color = None
 
 	def __init__(self, position):
 		self.position = position
-		#h for horizontal, v for vertical
-		self.orientation = None
-		self.x = None
-		self.y = None
-		self.width = PADDLE_WIDTH
-		self.height = PADDLE_HEIGHT
-		self.color = None
 		self.powerups = []
+		self.score = 0 #personnal score of the player
 		self.curse_time_start = 0
+		self.init_from_pos(position)
 
-	def init_from_pos(position):
-		
-	#paddle draw function
-	def draw(self, win):
+	def init_from_pos(self, position):
+		print("JE VEUX INIT FROM", position)
+		if position == "Player 0": #left player
+			self.orientation = 'v'
+			self.x = 10
+			self.y = WIN_HEIGHT // 2
+			self.width = PLAYER_WIDTH
+			self.height = PLAYER_HEIGHT
+			self.color = PLAYER_1_COLOR 
+		elif position == "Player 1": #right player
+			self.orientation = 'v'
+			self.x = WIN_WIDTH - 10
+			self.y = WIN_HEIGHT // 2
+			self.width = PLAYER_WIDTH
+			self.height = PLAYER_HEIGHT
+			self.color = PLAYER_2_COLOR 
+		elif position == "Player 2" : #bottom player
+			self.orientation = 'h'
+			self.x = WIN_WIDTH // 2
+			self.y = WIN_HEIGHT - 10
+			self.width = PLAYER_HEIGHT
+			self.height = PLAYER_WIDTH
+			self.color = PLAYER_3_COLOR 
+		elif position == "Player 3" : #top player
+			self.orientation = 'h'
+			self.x = WIN_WIDTH // 2
+			self.y = 10
+			self.width = PLAYER_HEIGHT
+			self.height = PLAYER_WIDTH
+			self.color = PLAYER_4_COLOR 
+	
+	def draw(self, win): #player draw function
 		pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
+
+	# def draw(self, win):
+		# pygame.draw.rect(win, self.COLOR, (self.x, self.y, self.width, self.height))
 
 	#Move function
 	def move(self, up=True, side=True):
@@ -58,7 +90,7 @@ class Player:
 				opponent.y = WIN_HEIGHT - opponent.height
 
 	def reset(self):
-		self.y = WIN_HEIGHT//2 - PADDLE_HEIGHT//2
+		self.y = WIN_HEIGHT//2 - PLAYER_HEIGHT//2
 
 	def add_powerup(self, powerup):
 		if not self.powerups:
@@ -85,14 +117,14 @@ class Player:
 		current_time = pygame.time.get_ticks()
 		if self.height == POWERUP_CURSE_SIZE:
 			if current_time - self.curse_time_start >= POWERUP_CURSE_DURATION * 1000:
-				retract_amount = POWERUP_CURSE_SIZE - PADDLE_HEIGHT
+				retract_amount = POWERUP_CURSE_SIZE - PLAYER_HEIGHT
 				self.y += retract_amount // 2
 				self.height -= retract_amount
 				self.CURSE_time_start = 0
 
 
 #Handling key pressing for paddle movement
-def handle_inputs(keys, left_player, right_player, ball, wall):
+def handle_inputs(keys, players, ball, wall):
 	#Left paddle input
 	if keys[pygame.K_w] :
 		left_player.move(up=True)
@@ -112,8 +144,32 @@ def handle_inputs(keys, left_player, right_player, ball, wall):
 def return_player_to_normal(player):
 	current_time = pygame.time.get_ticks()
 	if left_player.height == POWERUP_CURSE_SIZE and (current_time - left_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
-		left_player.height = PADDLE_HEIGHT
+		left_player.height = PLAYER_HEIGHT
 		left_player.CURSE_time_start = 0
 	if right_player.height == POWERUP_CURSE_SIZE and (current_time - right_player.CURSE_time_start) >= POWERUP_CURSE_DURATION * 1000:
-		right_player.height = PADDLE_HEIGHT
+		right_player.height = PLAYER_HEIGHT
 		right_player.CURSE_time_start = 0
+
+def handle_score(players, ball):
+	if ball.x < 0:
+		players[0].score += 1
+		ball.reset()
+	elif ball.x > WIN_WIDTH:
+		left_score += 1
+		ball.reset()
+
+	if NUM_OF_PLAYERS > 2:
+		if ball.y > WIN_HEIGHT:
+			players[2].score += 1
+			ball.reset()
+		if NUM_OF_PLAYERS == 4 and ball.y == 0:
+			players[3].score += 1
+			ball.reset()
+
+	#handle winning
+	if left_score >= WINNING_SCORE or right_score >= WINNING_SCORE:
+		left_score = 0
+		right_score = 0
+		left_player.reset()
+		right_player.reset()
+		ball.reset()

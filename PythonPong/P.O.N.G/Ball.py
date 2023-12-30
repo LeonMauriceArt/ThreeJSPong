@@ -55,8 +55,8 @@ def handle_ball_collision(ball, left_player, right_player, wall):
 	#Handling left paddle collision with ball
 	if ball.x_vel < 0:
 		#Wall collision
-		if ball.x >= WIDTH//2:
-			if ball.x - wall.width <= WIDTH//2 + wall.width and wall.isActive:
+		if ball.x >= WIN_WIDTH//2:
+			if ball.x - wall.width <= WIN_WIDTH//2 + wall.width and wall.isActive:
 				ball.x_vel *= -1
 				middle_y = WIN_HEIGHT//2
 				difference_in_y = middle_y - ball.y
@@ -78,8 +78,8 @@ def handle_ball_collision(ball, left_player, right_player, wall):
 	#Handling right paddle collision with ball
 	else:
 		#Wall collision
-		if ball.x <= WIDTH//2:
-			if ball.x + wall.width >= WIDTH//2 - wall.width and wall.isActive:
+		if ball.x <= WIN_WIDTH//2:
+			if ball.x + wall.width >= WIN_WIDTH//2 - wall.width and wall.isActive:
 				ball.x_vel *= -1
 				middle_y = WIN_HEIGHT//2
 				difference_in_y = middle_y - ball.y
@@ -98,3 +98,13 @@ def handle_ball_collision(ball, left_player, right_player, wall):
 				reduction_factor = (right_player.height / 2) / BALL_SPEED
 				y_vel = difference_in_y / reduction_factor
 				ball.y_vel = -1 * y_vel
+
+    # for player in [player1, player2, player3, player4]:
+    #     if isCollision(ball, player):
+    #         p_x, p_y = player.position()
+
+    #         if abs(p_x - x) > abs(p_y - y):
+    #             ball.dx *= -1
+    #         else:
+    #             ball.dy *= -1
+    #         break
